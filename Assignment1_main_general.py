@@ -162,7 +162,7 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, ftsize, lw):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, constrained_layout = True)
     fig.set_size_inches(12, 8)
     
-    # array of 1x1 arrays to a list of values for t = 2, ... 100
+
     alpha_hat = [float(el) for el in alpha_hat[1:-1]]
     V_t       = [float(el) for el in V_t]
     r_t       = [float(el) for el in r_t]
