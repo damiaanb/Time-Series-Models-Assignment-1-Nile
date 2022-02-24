@@ -3,8 +3,23 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import math as ms 
 import numpy as np
-    
+from scipy.optimize import minimize 
+import seaborn as sns 
+import statsmodels.api as sm
 
+#%% Figure 2.5 specific Functions
+
+
+def removedata(y, first, last):
+    """
+    Converts y to an array with and for the entry number first to last a value of NaN
+    """
+    y = np.array(y).astype(float)
+    y[first:last] = np.nan 
+    
+    return y
+    
+#%% Figure 2.6 specific Functions
 
 def empty_forecast(x, y, n_for): 
     """
@@ -23,17 +38,112 @@ def empty_forecast(x, y, n_for):
     return x_res, y_res
 
 
-
-def removedata(y, first, last):
+def Kalman_Filter_Forecast(y, a1, p1, sigma2_eps, sigma2_eta):
     """
-    Converts y to an array with and for the entry number first to last a value of NaN
+    2 Differences with Kalman_Filter:
+        1. For missing observations it sets  F_t[i]  = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t in stead of F_t[i] = np.array([[10 ** 7]])
+        2. It produces a 50% confidence interval only for the missing values (in this the forecasts) 
+           instead of a 95% confidence interval for the observed values 
+         
     """
-    y = np.array(y).astype(float)
-    y[first:last] = np.nan 
+    n = len(y)
     
-    return y
+    # create empty arrays 
+    a = np.zeros((n + 1,1,1))
+    a[0] = np.array([[a1]])
+    P = np.zeros((n + 1,1,1))
+    P[0] = np.array([[p1]])
+    v_t = np.zeros((n,1,1))
+    F_t = np.zeros((n,1,1))
+    K_t = np.zeros((n,1,1))
+    L_t = np.zeros((n,1,1))
+    q1  = np.zeros((n,1,1))
+    q2  = np.zeros((n,1,1))
+    
+    # System matrices of the general state space form 
+    Z_t = np.array([[1]])
+    H_t = np.array([[sigma2_eps]])
+    T_t = np.array([[1]])
+    R_t = np.array([[1]])
+    Q_t = np.array([[sigma2_eta]])
+    
+    for i in range(n):
+        
+        if (np.isnan(y[i])):
+            
+            v_t[i]     = np.array([[ms.nan]])
+            F_t[i]     = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t
+            K_t[i]     = np.array([[0]])
+            L_t[i]     = T_t - np.dot(K_t[i], Z_t)
+            q1[i]      = a[i] - 0.5 * ms.sqrt(F_t[i])
+            q2[i]      = a[i] + 0.5 * ms.sqrt(F_t[i])
+            a[i + 1]   = np.dot(T_t, a[i]) 
+            P[i + 1]   = np.dot(np.dot(T_t, P[i]), T_t.T) + np.dot(np.dot(R_t, Q_t), R_t.T) 
+            
+        else:
+            
+            v_t[i]  = y[i] - np.dot(Z_t, a[i])
+            F_t[i]  = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t
+            K_t[i]  = np.dot(np.dot(np.dot(T_t, P[i]), Z_t.T), inverse(F_t[i]))
+            L_t[i]  = T_t - np.dot(K_t[i], Z_t)
+            a[i + 1]   = np.dot(T_t, a[i]) + np.dot(K_t[i], v_t[i])
+            P[i + 1]   = np.dot(np.dot(T_t, P[i]), T_t.T) + np.dot(np.dot(R_t, Q_t), R_t.T) - np.dot(np.dot(K_t[i], F_t[i]), K_t[i].T)
+
+    return a, P, v_t, F_t, K_t, L_t, q1, q2, n
+
+#%% Figure 2.7 specific Functions
+
+def Kalman_repar(y, q): # see section 2.10.2
+    n = len(y)
+    
+    # create empty arrays 
+    a        = np.zeros((n,1,1))
+    a[0] = np.array([[y[0]]])
+    P_t_star = np.zeros((n,1,1))
+    P_t_star[0] = np.array([[1 + q]])
+    v_t      = np.zeros((n-1,1,1))
+    F_t_star = np.zeros((n-1,1,1))
+    K_t      = np.zeros((n-1,1,1))
+    
+    for i in range(n - 1):
+        v_t[i]          = y[i+1] - a[i]
+        F_t_star[i]     = P_t_star[i] + np.array([[1]])
+        K_t[i]          = P_t_star[i] / F_t_star[i]
+        a[i + 1]        = a[i] + np.dot(K_t[i], v_t[i])
+        P_t_star[i + 1] = np.dot(P_t_star[i],(np.array([[1]]) - K_t[i])) + np.array([[q]])
+
+    return v_t, F_t_star
+
+def compute_sigma_hat(n, v_t, F_t_star):
+    return (1 / (n - 1)) * np.sum((v_t ** 2) / F_t_star)
+
+# Necessary to assign y, because for Log_LDC we can only have one argument 
+data           = pd.read_excel("Nile.xlsx", names =["year", "volume"])
+y              = np.array(data["volume"])
+
+def Log_LDC(psi): # eq 2.63
+    q = ms.exp(psi)
+    v_t, F_t_star  = Kalman_repar(y, q)
+    n = len(v_t) + 1
+    sigma2_eps_hat = compute_sigma_hat(n, v_t, F_t_star)
+    value =  - ((n - 1) / 2) * ms.log(sigma2_eps_hat) - (1 / 2)* np.sum(np.log(F_t_star))
+
+    return -1 * value 
+
+def get_std_residuals():
+    result         = minimize(Log_LDC, 0, method = 'BFGS')
+    psi_opt        = float(result.x)
+    q_opt          = ms.exp(psi_opt)
+    v_t, F_t_star  = Kalman_repar(y, q_opt)
+    sigma2_eps_opt = compute_sigma_hat(len(v_t) + 1, v_t, F_t_star)
+    sigma2_eta_opt = q_opt * sigma2_eps_opt
+    e_t = (v_t / np.sqrt(F_t_star)) / ms.sqrt(sigma2_eps_opt)
+    return(e_t)
 
 
+
+
+# %% GENERAL FUNCTIONS used for several Figures 
 
 def inverse(M):
     """
@@ -97,62 +207,6 @@ def Kalman_Filter(y, a1, p1, sigma2_eps, sigma2_eta):
     return a, P, v_t, F_t, K_t, L_t, q005, q095, n
 
 
-
-def Kalman_Filter_Forecast(y, a1, p1, sigma2_eps, sigma2_eta):
-    """
-    2 Differences with Kalman_Filter:
-        1. For missing observations it sets  F_t[i]  = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t in stead of F_t[i] = np.array([[10 ** 7]])
-        2. It produces a 50% confidence interval only for the missing values (in this the forecasts) 
-           instead of a 95% confidence interval for the observed values 
-         
-    """
-    n = len(y)
-    
-    # create empty arrays 
-    a = np.zeros((n + 1,1,1))
-    a[0] = np.array([[a1]])
-    P = np.zeros((n + 1,1,1))
-    P[0] = np.array([[p1]])
-    v_t = np.zeros((n,1,1))
-    F_t = np.zeros((n,1,1))
-    K_t = np.zeros((n,1,1))
-    L_t = np.zeros((n,1,1))
-    q1  = np.zeros((n,1,1))
-    q2  = np.zeros((n,1,1))
-    
-    # System matrices of the general state space form 
-    Z_t = np.array([[1]])
-    H_t = np.array([[sigma2_eps]])
-    T_t = np.array([[1]])
-    R_t = np.array([[1]])
-    Q_t = np.array([[sigma2_eta]])
-    
-    for i in range(n):
-        
-        if (np.isnan(y[i])):
-            
-            v_t[i]     = np.array([[ms.nan]])
-            F_t[i]     = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t
-            K_t[i]     = np.array([[0]])
-            L_t[i]     = T_t - np.dot(K_t[i], Z_t)
-            q1[i]      = a[i] - 0.5 * ms.sqrt(F_t[i])
-            q2[i]      = a[i] + 0.5 * ms.sqrt(F_t[i])
-            a[i + 1]   = np.dot(T_t, a[i]) 
-            P[i + 1]   = np.dot(np.dot(T_t, P[i]), T_t.T) + np.dot(np.dot(R_t, Q_t), R_t.T) 
-            
-        else:
-            
-            v_t[i]  = y[i] - np.dot(Z_t, a[i])
-            F_t[i]  = np.dot(np.dot(Z_t, P[i]), Z_t.T) + H_t
-            K_t[i]  = np.dot(np.dot(np.dot(T_t, P[i]), Z_t.T), inverse(F_t[i]))
-            L_t[i]  = T_t - np.dot(K_t[i], Z_t)
-            a[i + 1]   = np.dot(T_t, a[i]) + np.dot(K_t[i], v_t[i])
-            P[i + 1]   = np.dot(np.dot(T_t, P[i]), T_t.T) + np.dot(np.dot(R_t, Q_t), R_t.T) - np.dot(np.dot(K_t[i], F_t[i]), K_t[i].T)
-
-    return a, P, v_t, F_t, K_t, L_t, q1, q2, n
-
-
-
 def  Kalman_Smoother(n, v_t, F_t, L_t, a, P, y, K_t,  sigma2_eps, sigma2_eta):
     
 
@@ -203,8 +257,12 @@ def  Kalman_Smoother(n, v_t, F_t, L_t, a, P, y, K_t,  sigma2_eps, sigma2_eta):
               var_eta_yn[j]= Q_t - np.dot(np.dot(Q_t, Q_t), N_t[j]) # equation 2.47
          
       return r_t, alpha_hat, N_t, V_t, q005, q095, eps_hat, var_eps_yn, eta_hat, var_eta_yn
+  
+    
+  
+    
  
-
+# %% Plotting functions for 2.1 - 2.8
 
 def Plot21(x, y, a, p, v, F,q005, q095, ftsize, lw): 
     """
@@ -547,6 +605,58 @@ def Plot26(x, y, a, q1, q2, P, F_t, ftsize, lw):
             ax4.spines[axis].set_visible(False)
 
 
+def Plot27(x, y, e_t, ftsize, lw): 
+    """
+    Plots the 4 plots of figure 2.7 of Time Series Analysis by State Space Methods bu Durbin J., Koopman S.J.
+    """
+    
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, constrained_layout = True)
+    fig.set_size_inches(12, 8)
+    e_t = [float(el) for el in e_t]
+    
+    # SUBPLOT 1 upper left ------------------------------------------------
+    ax1.plot(x[1:], e_t, color = "darkslateblue", lw = 2)
+    ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    ax1.set_xlim([1864, 1972])
+    ax1.hlines(0,1860, 1970, color = 'black', lw = 1)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax1.spines[axis].set_linewidth(lw)
+        else:
+            ax1.spines[axis].set_visible(False)
+
+    # SUBPLOT 2 upper right ----------------------------------------------
+    ax2.hist(e_t, color = "darkslateblue", lw=lw,facecolor='none', edgecolor="darkslateblue", density = True)
+    sns.distplot(e_t, hist=False, ax=ax2)
+    ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax2.spines[axis].set_linewidth(lw)
+        else:
+            ax2.spines[axis].set_visible(False)
+    
+    # SUBPLOT 3 below left -----------------------------------------------
+    sm.qqplot(np.array(e_t), line = 'r', ax =ax3, linestyle='solid', marker  = ',', color ="darkslateblue")
+    ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    ax3.hlines(0,-2.4, 2.4, color = 'black', lw = 1)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax3.spines[axis].set_linewidth(lw)
+        else:
+            ax3.spines[axis].set_visible(False)
+
+    # SUBPLOT 4 below right ----------------------------------------------
+
+    sm.graphics.tsa.plot_acf(e_t, lags=10, ax  =ax4, marker  = ',', alpha = None)
+    ax4.tick_params(axis='both', which='major', labelsize=ftsize)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax4.spines[axis].set_linewidth(lw)
+        else:
+            ax4.spines[axis].set_visible(False)
+
+
+
 def main():
     
     # Get Nile data and convert from to DataFrame to Array
@@ -567,6 +677,9 @@ def main():
     # Apply Kalman Filter and Smoother: Forecast case 
     a_f, P_f, v_t_f, F_t_f, K_t_f, L_t_f, q1_f, q2_f, n_f = Kalman_Filter_Forecast(y_for, a1 = 0, p1 = 10 ** 7, sigma2_eps = 15099, sigma2_eta = 1469.1)
     
+    # Apply MLE and get the standardized residuals
+    e_t = get_std_residuals()
+    
     
     # Plot Figures 
     Plot21(x, y, a, P, v_t, F_t, q005, q095, ftsize = 12, lw = 1.5)
@@ -574,7 +687,7 @@ def main():
     Plot23(x, y, eps_hat, var_eps_yn, eta_hat, var_eta_yn, ftsize = 12, lw = 1.5)
     Plot25(x, y_mis, a_mis, P_mis, alpha_hat_mis, V_t_mis, ftsize = 12, lw = 1.5)
     Plot26(x_for, y_for, a_f, q1_f, q2_f, P_f, F_t_f, ftsize = 12, lw = 1.5)
-    
+    Plot27(x, y, e_t, ftsize = 12, lw  = 1.5)
 
 
 if __name__ == '__main__':
