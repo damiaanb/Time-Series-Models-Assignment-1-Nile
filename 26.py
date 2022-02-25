@@ -228,8 +228,7 @@ def Plot21(x, y, a, p, v, F,q005, q095, ftsize, lw):
     ax1.plot(x[1:], q005, color = "mediumslateblue", lw = 1, alpha =0.6)
     ax1.plot(x[1:], q095, color = "mediumslateblue", lw = 1, alpha =0.6)
     ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax1.set_ylim([450, 1400])
-    ax1.set_xlim([1864, 1972])
+    ax1.set_ylim([0.2, 1])
     # ax1.set_xticks(ticks = [1870 + i * 10 for i in range(11)], labels = ["1870","1880","1890","1900","1910","1920","1930","1940","1950","1960","1970"]) 
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
@@ -240,9 +239,8 @@ def Plot21(x, y, a, p, v, F,q005, q095, ftsize, lw):
     # SUBPLOT 2 upper right ----------------------------------------------
     ax2.plot(x[1:], p, color = "darkslateblue", lw=lw)
     ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax2.set_xlim([1864, 1972])
-    ax2.set_ylim([5000, 17500])
-    
+    ax2.set_ylim([5490, 6000])
+
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
             ax2.spines[axis].set_linewidth(lw)
@@ -253,9 +251,8 @@ def Plot21(x, y, a, p, v, F,q005, q095, ftsize, lw):
     ax3.plot(x[1:], v, color = "darkslateblue", lw=lw)
     ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
     #ax3.xticks([1880,1900],["akax", "fey"], rotation='vertical')
-    ax3.set_xlim([1864, 1972])
-    ax3.set_ylim([-450, 400])
-    ax3.hlines(0,1860, 1970, color = 'black', lw = lw)
+    ax3.set_ylim([-0.3, 0.3])
+    ax3.hlines(0,1800,2070, color = 'black', lw = lw)
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
             ax3.spines[axis].set_linewidth(lw)
@@ -265,9 +262,8 @@ def Plot21(x, y, a, p, v, F,q005, q095, ftsize, lw):
     # SUBPLOT 4 below right ----------------------------------------------
     ax4.plot(x[1:], F, color = "darkslateblue", lw=lw)
     ax4.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax4.set_xlim([1864, 1972])
-    ax4.set_ylim([20000, 32500])
-    
+    ax4.set_ylim([20000,25000])
+
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
             ax4.spines[axis].set_linewidth(lw)
@@ -299,8 +295,7 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005, q095, ftsize, lw):
     ax1.plot(x, q005, color = "mediumslateblue", lw = 1, alpha =0.6)
     ax1.plot(x, q095, color = "mediumslateblue", lw = 1, alpha =0.6)
     ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax1.set_ylim([450, 1400])
-    ax1.set_xlim([1864, 1972])
+    ax1.set_ylim([0.2, 1])
     # ax1.set_xticks(ticks = [1870 + i * 10 for i in range(11)], labels = ["1870","1880","1890","1900","1910","1920","1930","1940","1950","1960","1970"]) 
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
@@ -311,7 +306,6 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005, q095, ftsize, lw):
     # SUBPLOT 2 upper right ----------------------------------------------
     ax2.plot(x, V_t, color = "darkslateblue", lw=lw)
     ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax2.set_xlim([1864, 1974])
     ax2.set_ylim([2300, 4100])
         
     for axis in ['bottom','left','right','top']:
@@ -324,9 +318,8 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005, q095, ftsize, lw):
     ax3.plot(x, r_t, color = "darkslateblue", lw=lw)
     ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
     #ax3.xticks([1880,1900],["akax", "fey"], rotation='vertical')
-    ax3.set_xlim([1864, 1972])
-    ax3.set_ylim([-0.036, 0.024])
-    ax3.hlines(0,1860, 1970, color = 'black', lw = lw)
+    ax3.set_ylim([-0.00003, 0.00003])
+    ax3.hlines(0,1800, 2060, color = 'black', lw = lw)
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
             ax3.spines[axis].set_linewidth(lw)
@@ -336,7 +329,6 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005, q095, ftsize, lw):
     # SUBPLOT 4 below right ----------------------------------------------
     ax4.plot(x, N_t, color = "darkslateblue", lw=lw)
     ax4.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
-    ax4.set_xlim([1864, 1974])
     ax4.set_ylim([5 *(10 ** (-5)), 1.1 * (10 ** (-4))])
     
     for axis in ['bottom','left','right','top']:
@@ -344,6 +336,248 @@ def Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005, q095, ftsize, lw):
             ax4.spines[axis].set_linewidth(lw)
         else:
             ax4.spines[axis].set_visible(False)
+
+
+
+
+def Plot23(x, y, eps_hat, var_eps_yn, eta_hat, var_eta_yn, ftsize, lw): 
+    """
+    Plots the 4 plots of figure 2.2 of Time Series Analysis by State Space Methods bu Durbin J., Koopman S.J.
+    """
+
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, constrained_layout = True)
+    fig.set_size_inches(12, 8)
+
+    eps_hat    = [float(el) for el in eps_hat]
+    var_eps_yn = [ms.sqrt(float(el)) for el in var_eps_yn] # we plot standard deviations
+    eta_hat    = [float(el) for el in eta_hat]
+    var_eta_yn = [ms.sqrt(float(el)) for el in var_eta_yn] # we plot standard deviations  
+
+    # SUBPLOT 1 upper left ------------------------------------------------
+    ax1.plot(x, eps_hat, color = "darkslateblue", lw = lw)
+    ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    ax1.hlines(0,1800, 2060, color = 'black', lw = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax1.spines[axis].set_linewidth(lw)
+        else:
+            ax1.spines[axis].set_visible(False)
+
+    # # SUBPLOT 2 upper right ----------------------------------------------
+    ax2.plot(x, var_eps_yn, color = "darkslateblue", lw=lw)
+    ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    ax2.set_ylim([48, 64])
+        
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax2.spines[axis].set_linewidth(lw)
+        else:
+            ax2.spines[axis].set_visible(False)
+    
+    # SUBPLOT 3 below left -----------------------------------------------
+    ax3.plot(x, eta_hat, color = "darkslateblue", lw=lw)
+    ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    #ax3.xticks([1880,1900],["akax", "fey"], rotation='vertical')
+    #ax3.set_ylim([-0.036, 0.024])
+    ax3.hlines(0,1800, 2060, color = 'black', lw = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax3.spines[axis].set_linewidth(lw)
+        else:
+            ax3.spines[axis].set_visible(False)
+
+    # SUBPLOT 4 below right ----------------------------------------------
+    ax4.plot(x, var_eta_yn, color = "darkslateblue", lw=lw)
+    ax4.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    #ax4.set_ylim([5 *(10 ** (-5)), 1.1 * (10 ** (-4))])
+    
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax4.spines[axis].set_linewidth(lw)
+        else:
+            ax4.spines[axis].set_visible(False)
+
+
+
+def Plot25(x, y, a, p, alpha_hat, V_t_mis, ftsize, lw): 
+    """
+    Plots the 4 plots of figure 2.1 of Time Series Analysis by State Space Methods bu Durbin J., Koopman S.J.
+    """
+    
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, constrained_layout = True)
+    fig.set_size_inches(12, 8)
+    
+    # array of 1x1 arrays to a list of values for t = 2, ... 100
+    a         = [float(el) for el in a[1:]]
+    p         = [float(el) for el in p[1:]]
+    alpha_hat = [float(el) for el in alpha_hat]
+    V_t_mis   = [float(el) for el in V_t_mis]
+    
+    # SUBPLOT 1 upper left ------------------------------------------------
+    ax1.plot(x, y, color = "black")
+    ax1.plot(x, a, color = "darkslateblue", lw = lw)
+    ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax1.spines[axis].set_linewidth(lw)
+        else:
+            ax1.spines[axis].set_visible(False)
+    
+    # SUBPLOT 2 upper right ----------------------------------------------
+    ax2.plot(x, p, color = "darkslateblue", lw=lw)
+    ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    # ax2.set_ylim([4000, 34000])
+    
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax2.spines[axis].set_linewidth(lw)
+        else:
+            ax2.spines[axis].set_visible(False)
+    
+    # SUBPLOT 3 below left -----------------------------------------------
+    ax3.plot(x, y, color = "black")
+    ax3.plot(x, alpha_hat, color = "darkslateblue")
+    #ax3.plot(x[1:], v, color = "darkslateblue", lw=lw)
+    ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    #ax3.xticks([1880,1900],["akax", "fey"], rotation='vertical')
+    # ax3.set_ylim([-450, 400])
+    #ax3.hlines(0,1860, 1970, color = 'black', lw = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax3.spines[axis].set_linewidth(lw)
+        else:
+            ax3.spines[axis].set_visible(False)
+            
+    # SUBPLOT 4 below right ----------------------------------------------
+    ax4.plot(x, V_t_mis, color = "darkslateblue", lw=lw)
+    ax4.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    # ax4.set_ylim([20000, 32500])
+    
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax4.spines[axis].set_linewidth(lw)
+        else:
+            ax4.spines[axis].set_visible(False)
+
+
+
+def Plot26(x, y, a, q1, q2, P, F_t, ftsize, lw): 
+    """
+    Plots the 4 plots of figure 2.6 of Time Series Analysis by State Space Methods bu Durbin J., Koopman S.J.
+    """
+    
+    
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, constrained_layout = True)
+    fig.set_size_inches(12, 8)
+    
+
+    a = [float(el) for el in a[1:]]
+    P = [float(el) for el in P[1:]]
+    F_t = [float(el) for el in F_t]
+    q1_f  = [float(el) for el in np.delete(q1, np.where(q1 == 0))]
+    q2_f  = [float(el) for el in np.delete(q2, np.where(q2 == 0))]
+    
+    
+    # SUBPLOT 1 upper left ------------------------------------------------
+    ax1.scatter(x, y, color = "black", s = 10)
+    ax1.plot(x, a, color = "darkslateblue", lw = 2)
+    ax1.plot(np.delete(x, np.where(q1 == 0)), q1_f, color = "mediumslateblue", lw = 1, alpha =0.6)
+    ax1.plot(np.delete(x, np.where(q1 == 0)), q2_f, color = "mediumslateblue", lw = 1, alpha =0.6)
+    ax1.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax1.spines[axis].set_linewidth(lw)
+        else:
+            ax1.spines[axis].set_visible(False)
+
+    # SUBPLOT 2 upper right ----------------------------------------------
+    ax2.plot(x, P, color = "darkslateblue", lw=lw)
+    ax2.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax2.spines[axis].set_linewidth(lw)
+        else:
+            ax2.spines[axis].set_visible(False)
+    
+    # SUBPLOT 3 below left -----------------------------------------------
+    ax3.plot(x, a, color = "darkslateblue", lw = lw)
+    ax3.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    #ax3.xticks([1880,1900],["akax", "fey"], rotation='vertical')
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax3.spines[axis].set_linewidth(lw)
+        else:
+            ax3.spines[axis].set_visible(False)
+
+    # SUBPLOT 4 below right ----------------------------------------------
+
+    ax4.plot(x[1:], F_t[1:], color = "darkslateblue", lw=lw)
+    ax4.tick_params(axis='both', which='major', labelsize=ftsize, width = lw)
+    
+    for axis in ['bottom','left','right','top']:
+        if axis == 'bottom' or axis == 'left':
+            ax4.spines[axis].set_linewidth(lw)
+        else:
+            ax4.spines[axis].set_visible(False)
+
+
+def main():
+    
+    # Get Nile data and convert from to DataFrame to Array
+    data  = pd.read_csv ('monthly-sea-surface-temperature.csv')
+    data = data.loc[data['Entity'] == 'World']
+    x = np.array(range(1, 2065))
+    y            = np.array(data["monthly_sea_surface_temperature_anomaly"])
+    x = x[1800:]
+    y = y[1800:]
+    y_mis        = removedata(removedata(y,20,40),60,80)
+    x_for, y_for = empty_forecast(x, y, n_for = 30)
+    
+    # Apply Kalman Filter and Smoother
+    a, P, v_t, F_t, K_t, L_t, q005, q095, n                                                        = Kalman_Filter(y, a1 = 0, p1 = 10 ** 7, sigma2_eps = 15099, sigma2_eta = 1469.1)
+    r_t, alpha_hat, N_t, V_t, q005_smooth, q095_smooth, eps_hat, var_eps_yn, eta_hat, var_eta_yn   = Kalman_Smoother(n, v_t, F_t, L_t, a, P, y, K_t, sigma2_eps = 15099, sigma2_eta = 1469.1)
+    
+    # Apply Kalman Filter and Smoother: Missing observation case 
+    a_mis, P_mis, v_t_mis, F_t_mis, K_t_mis, L_t_mis, q005_mis, q095_mis, n                                                = Kalman_Filter(y_mis, a1 = 0, p1 = 10 ** 7, sigma2_eps = 15099, sigma2_eta = 1469.1)
+    r_t_mis, alpha_hat_mis, N_t_mis, V_t_mis, q005_mis, q095_mis, eps_hat_mis, var_eps_yn_mis, eta_hat_mis, var_eta_yn_mis = Kalman_Smoother(n, v_t_mis, F_t_mis, L_t_mis, a_mis, P_mis, y_mis, K_t_mis, sigma2_eps = 15099, sigma2_eta = 1469.1)
+    
+    # Apply Kalman Filter and Smoother: Forecast case 
+    a_f, P_f, v_t_f, F_t_f, K_t_f, L_t_f, q1_f, q2_f, n_f = Kalman_Filter_Forecast(y_for, a1 = 0, p1 = 10 ** 7, sigma2_eps = 15099, sigma2_eta = 1469.1)
+    
+    print(F_t)
+    print(P)
+    
+    # Plot Figures 
+    Plot21(x, y, a, P, v_t, F_t, q005, q095, ftsize = 12, lw = 1.5)
+    Plot22(x, y, alpha_hat, V_t, r_t, N_t, q005_smooth, q095_smooth, ftsize = 12, lw = 1.5)
+    Plot23(x, y, eps_hat, var_eps_yn, eta_hat, var_eta_yn, ftsize = 12, lw = 1.5)
+    Plot25(x, y_mis, a_mis, P_mis, alpha_hat_mis, V_t_mis, ftsize = 12, lw = 1.5)
+    Plot26(x_for, y_for, a_f, q1_f, q2_f, P_f, F_t_f, ftsize = 12, lw = 1.5)
+
+
+if __name__ == '__main__':
+    
+    main()
+
+
+   #x            = np.array(data["Day"])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
