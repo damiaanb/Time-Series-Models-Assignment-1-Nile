@@ -654,8 +654,7 @@ def Plot27(x, y, e_t, ftsize, lw):
             ax3.spines[axis].set_visible(False)
 
     # SUBPLOT 4 below right ----------------------------------------------
-
-    sm.graphics.tsa.plot_acf(e_t, lags=10, ax  =ax4, marker  = ',', alpha = None)
+    sm.graphics.tsa.plot_acf(e_t, zero  = False, lags=10, ax  =ax4, marker  = ',', alpha = None)
     ax4.tick_params(axis='both', which='major', labelsize=ftsize)
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':

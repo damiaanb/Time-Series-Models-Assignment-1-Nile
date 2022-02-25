@@ -654,8 +654,7 @@ def Plot27(x, y, e_t, ftsize, lw):
             ax3.spines[axis].set_visible(False)
 
     # SUBPLOT 4 below right ----------------------------------------------
-
-    sm.graphics.tsa.plot_acf(e_t, lags=10, ax  =ax4, marker  = ',', alpha = None)
+    sm.graphics.tsa.plot_acf(e_t, zero  = False, lags=10, ax  =ax4, marker  = ',', alpha = None)
     ax4.tick_params(axis='both', which='major', labelsize=ftsize)
     for axis in ['bottom','left','right','top']:
         if axis == 'bottom' or axis == 'left':
@@ -721,12 +720,9 @@ def Plot28(x, y, u_t_star, r_t_star, ftsize, lw):
 def main():
     
     # Get Nile data and convert from to DataFrame to Array
-    data  = pd.read_csv ('monthly-sea-surface-temperature.csv')
-    data = data.loc[data['Entity'] == 'World']
-    x = np.array(range(1, 2065))
-    y            = np.array(data["monthly_sea_surface_temperature_anomaly"])
-    x = x[1800:]
-    y = y[1800:]
+    data         = pd.read_excel("Nile.xlsx", names =["year", "volume"])
+    x            = np.array(data["year"])
+    y            = np.array(data["volume"])
     y_mis        = removedata(removedata(y, 20, 40),60 ,80)
     x_for, y_for = empty_forecast(x, y, n_for = 30)
     
@@ -751,8 +747,8 @@ def main():
     Plot23(x, y, eps_hat, var_eps_yn, eta_hat, var_eta_yn, ftsize = 12, lw = 1.5)
     Plot25(x, y_mis, a_mis, P_mis, alpha_hat_mis, V_t_mis, ftsize = 12, lw = 1.5)
     Plot26(x_for, y_for, a_f, q1_f, q2_f, P_f, F_t_f, ftsize = 12, lw = 1.5)
-    # Plot27(x, y, e_t, ftsize = 12, lw  = 1.5)
-    # Plot28(x, y, u_t_star, r_t_star, ftsize = 12, lw = 1.5)
+    Plot27(x, y, e_t, ftsize = 12, lw  = 1.5)
+    Plot28(x, y, u_t_star, r_t_star, ftsize = 12, lw = 1.5)
     
 
 if __name__ == '__main__':
